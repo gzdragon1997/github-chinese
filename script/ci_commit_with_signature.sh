@@ -134,15 +134,15 @@ graphql_request='{
     }
   }
 }'
-# 测试 headline 是否能作为合法 JSON 字符串
-echo "$message_headline"
-echo "$message_headline" | jq -Rsa . >/dev/null 2>&1 && echo "headline OK" || echo "headline contains invalid chars"
-
-# 测试 body
-echo "$message_body"
-echo "$message_body" | jq -Rsa . >/dev/null 2>&1 && echo "body OK" || echo "body contains invalid chars"
 
 echo "$graphql_request" > debug.json
+echo "=== First 15 lines of debug.json (with visible control chars) ==="
+head -15 debug.json | cat -A    # cat -A 会显示换行符为 $，制表符为 ^I
+
+# 或者用 od -c 查看十六进制和转义
+echo "=== Detailed hex dump around line 9 ==="
+sed -n '8,12p' debug.json | od -c
+
 jq . debug.json || { echo "❌ JSON 非法，请检查 debug.json" >&2; exit 1; }
 
 echo "$graphql_request" | gh api graphql --input - | jq -r '
