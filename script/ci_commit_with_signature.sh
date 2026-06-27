@@ -134,6 +134,14 @@ graphql_request='{
     }
   }
 }'
+# 测试 headline 是否能作为合法 JSON 字符串
+echo "$message_headline"
+echo "$message_headline" | jq -Rsa . >/dev/null 2>&1 && echo "headline OK" || echo "headline contains invalid chars"
+
+# 测试 body
+echo "$message_body"
+echo "$message_body" | jq -Rsa . >/dev/null 2>&1 && echo "body OK" || echo "body contains invalid chars"
+
 echo "$graphql_request" > debug.json
 jq . debug.json || { echo "❌ JSON 非法，请检查 debug.json" >&2; exit 1; }
 
